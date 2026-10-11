@@ -1,7 +1,7 @@
 #include <stdio.h>
 #define ALT 30
 #define LAR 120
-#define JANELA_ALT 10
+#define JANELA_ALT 25
 #define JANELA_LAR 30
 #define RED 31
 #define BLUE 34
@@ -18,6 +18,8 @@ typedef struct{
 	Pixel grade[JANELA_ALT][JANELA_LAR];
 	int x;
 	int y;
+	int alt;
+	int lar;
 }Janela;
 
 typedef struct{
@@ -30,14 +32,14 @@ void renderScreen(Janela, Tela*, int*);
 void printScreen(Tela*, int);
 
 int main(){
-	Janela janela0={.x=5, .y=3}, janela1={.x=35, .y=3}, janela2={.x=65, .y=3};
+	Janela janela0={.x=5, .y=3, .alt=10, .lar=10}, janela1={.x=20, .y=3, .alt=25, .lar=30}, janela2={.x=65, .y=3, .alt=10, .lar=10};
 	Tela pilha[5];
 	int topo=0;
 	
 	printf("\033[?25l");							//Esconde cursor
 	
 	initScreen(pilha);								//Escrever todos os valores da pilha como 0
-	bufferJanela(&janela0, RED, SOLID);				//Armazenar a janela
+	bufferJanela(&janela0, RED, HOLLOW);				//Armazenar a janela
 	bufferJanela(&janela1, BLUE, SOLID);
 	bufferJanela(&janela2, GREEN, SOLID);
 	renderScreen(janela0, pilha, &topo);				//Renderizar elementos da janela na pilha
@@ -63,8 +65,8 @@ void bufferJanela(Janela *janela, int cor, int estado){
 	int i, j;
 	switch(estado){
 		case SOLID:{
-			for(i=0;i<JANELA_ALT;i++){
-				for(j=0;j<JANELA_LAR;j++){
+			for(i=0;i<janela->alt;i++){
+				for(j=0;j<janela->lar;j++){
 					janela->grade[i][j].caracter=219;
 					janela->grade[i][j].cor=cor;
 				}
@@ -72,15 +74,15 @@ void bufferJanela(Janela *janela, int cor, int estado){
 			break;
 		}
 		case HOLLOW:{
-			for(i=0;i<JANELA_ALT;i++){
-				for(j=0;j<JANELA_LAR;j++){
-					if(j==0||j==JANELA_LAR-1){
+			for(i=0;i<janela->alt;i++){
+				for(j=0;j<janela->lar;j++){
+					if(j==0||j==janela->lar-1){
 						janela->grade[i][j].caracter=219;
 					}
 					else if(i==0){
 						janela->grade[i][j].caracter=223;
 					}
-					else if(i==JANELA_ALT-1){
+					else if(i==janela->alt-1){
 						janela->grade[i][j].caracter=220;
 					}
 					janela->grade[i][j].cor=cor;
@@ -97,8 +99,8 @@ void renderScreen(Janela janela, Tela *pilha, int *topo){
 	if(*topo>0){
 		pilha[*topo]=pilha[*topo-1];
 	}
-	for(i=0;i<JANELA_ALT;i++){
-		for(j=0;j<JANELA_LAR;j++){
+	for(i=0;i<janela.alt;i++){
+		for(j=0;j<janela.lar;j++){
 			pilha[*topo].gradeTela[janela.y+i][janela.x+j].caracter=janela.grade[i][j].caracter;
 			pilha[*topo].gradeTela[janela.y+i][janela.x+j].cor=janela.grade[i][j].cor;
 		}
