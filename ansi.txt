@@ -1,0 +1,28 @@
+	Mudar cor do texto - \033[Xm		|		Estilo de texto - \033[Xm
+						|
+	Texto		        BG		|		0	Reset (normal)
+						|		1	Negrito
+	-----------------------------		|		2	Fraco / Dim
+	30	Preto				|		4	Sublinhado
+	31	Vermelho	41		|		5	Piscando
+	32	Verde		42		|		7	Invertido (fundo trocado)
+	33	Amarelo		43		|		8	Invisível
+	34	Azul		44		|
+	35	Magenta		45		|
+	36	Ciano		46		|
+	37	Branco		47		|
+	________________________________________|__________________________________________________
+	
+	Cursor e Tela
+	
+	\033[H		Cursor para posição 1,1
+	\033[y;xH	Cursor linha y, coluna x
+	\033[2J		Limpa tela
+	\033[2K		Limpa linha atual
+	\033[?25l	Esconde cursor
+	\033[?25h	Mostra cursor
+
+	seta para cima - 72
+	seta para baixo - 80
+	seta para direita - 77
+	seta para esquerda - 75
