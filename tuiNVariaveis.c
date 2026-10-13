@@ -3,9 +3,20 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define ALT_MAX 30
+#define LARG_MAX 30
+
 #define DEFAULT 0
 #define JUSTA 1
 #define BORDA 2
+
+#define RED 31
+#define GREEN 32
+#define YELLOW 33
+#define BLUE 34
+#define PURPLE 35
+#define CIAN 36
+#define WHITE 37
 
 typedef struct{
 	char *opcoes[10];
@@ -13,7 +24,7 @@ typedef struct{
 }Opcoes;
 
 typedef struct{
-	int grade[30][30];
+	int grade[ALT_MAX][LARG_MAX];
 	int cor;
 	int alt;
 	int larg;
@@ -23,9 +34,22 @@ typedef struct{
 	Opcoes opcoes;
 }Janela;
 
+typedef struct{
+	int grade[ALT_MAX][LARG_MAX];
+	int cor;
+	int alt;
+	int larg;
+	int x;
+	int y;
+	int id;
+	char *texto;
+}JanelaTexto;
+
 Janela *janela=NULL;
 int qtd=0;
-Opcoes menu={.opcoes={
+JanelaTexto *janelaTexto=NULL;
+
+Opcoes start={.opcoes={
 			"Iniciar",
 			"Configuracoes",
 			"Sair",
@@ -37,24 +61,10 @@ void desenharMenu(int, int);
 void desenharJanela(int);
 int selecionarOpcao();
 void bufferJanela(int, int);
-void criarJanela(int cor, int alt, int larg, int x, int y, int id, Opcoes menuVar){
-	int i;
-	janela=realloc(janela, (qtd+1)*sizeof(Janela));
-	
-	janela[qtd].cor=cor;
-	janela[qtd].alt=alt;
-	janela[qtd].larg=larg;
-	janela[qtd].x=x;
-	janela[qtd].y=y;
-	janela[qtd].id=id;
-	janela[qtd].opcoes.numOpcoes=menuVar.numOpcoes;
-	for(i=0;i<menuVar.numOpcoes;i++){
-		janela[qtd].opcoes.opcoes[i] = menuVar.opcoes[i];
-		//strcpy(janela[qtd].opcoes.opcoes[i], menuVar.opcoes[i]);
-	}
-	
-	qtd++;
-}
+void criarJanela(int, int, int, int, int, int, Opcoes);
+void criarJanelaTexto(int, int, int, int, int, int);
+void bufferJanelaTexto(int, int, char*);
+void desenharJanelaTexto(int);
 
 //==========================================================================MAIN========================================================================================
 
@@ -62,14 +72,45 @@ int main(){
 	int select;
 	
     printf("\033[?25l");
+    system("cls");
+    
     	//COR, ALT, LARG, X, Y, ID, MENU_ASSOCIADO
-    criarJanela(32, 6, 15, 45, 10, 0, menu);
-    bufferJanela(0, BORDA);
+    criarJanela(RED, 6, 15, 20, 10, 0, start);
+    bufferJanela(0, JUSTA);
+    
+    criarJanela(PURPLE, 6, 15, 45, 10, 1, start);					//TAMANHO MAXIMO DE 30X30
+    bufferJanela(1, DEFAULT);
+    
+    criarJanela(CIAN, 6, 15, 70, 10, 2, start);
+    bufferJanela(2, BORDA);
+    
+    criarJanela(YELLOW, 6, 30, 20, 20, 3, start);
+    bufferJanela(3, BORDA);
+    
+    criarJanelaTexto(GREEN, 6, 30, 50, 20, 4);
+    bufferJanelaTexto(4, BORDA, "KJFANLDAFSKJHLDSFKJHGSDLKJFeeeee");
+    
+    desenharJanelaTexto(4);
+    
     desenharJanela(0);
-    
     select=selecionarOpcao(0);
-    printf("\nVoce escolheu: %d\n", select + 1);
     
+    //system("cls");
+    
+    desenharJanela(1);
+    select=selecionarOpcao(1);
+    
+    //system("cls");
+    
+    desenharJanela(2);
+    select=selecionarOpcao(2);
+    
+    //system("cls");
+    
+    desenharJanela(3);
+    select=selecionarOpcao(3);
+    
+    system("cls");
     printf("\033[?25h");
     
     free(janela);
@@ -185,4 +226,125 @@ void bufferJanela(int id, int tipo){
 			}
 		}
 	}
+}
+
+void criarJanela(int cor, int alt, int larg, int x, int y, int id, Opcoes menuVar){
+	int i;
+	
+	if(alt>ALT_MAX || larg>LARG_MAX){
+		printf("Erro: tamanho de janela %i muito grande", id);
+		exit(1);
+	}
+	janela=realloc(janela, (qtd+1)*sizeof(Janela));
+	
+	janela[qtd].cor=cor;
+	janela[qtd].alt=alt;
+	janela[qtd].larg=larg;
+	janela[qtd].x=x;
+	janela[qtd].y=y;
+	janela[qtd].id=id;
+	janela[qtd].opcoes.numOpcoes=menuVar.numOpcoes;
+	for(i=0;i<menuVar.numOpcoes;i++){
+		janela[qtd].opcoes.opcoes[i] = menuVar.opcoes[i];
+		//strcpy(janela[qtd].opcoes.opcoes[i], menuVar.opcoes[i]);
+	}
+	qtd++;
+}
+
+void criarJanelaTexto(int cor, int alt, int larg, int x, int y, int id){
+	int i;
+	
+	if(alt>ALT_MAX || larg>LARG_MAX){
+		printf("Erro: tamanho de janela %i muito grande", id);
+		exit(1);
+	}
+	janelaTexto=realloc(janelaTexto, (qtd+1)*sizeof(JanelaTexto));
+	
+	janelaTexto[qtd].cor=cor;
+	janelaTexto[qtd].alt=alt;
+	janelaTexto[qtd].larg=larg;
+	janelaTexto[qtd].x=x;
+	janelaTexto[qtd].y=y;
+	janelaTexto[qtd].id=id;
+	
+	qtd++;
+}
+
+void bufferJanelaTexto(int id, int tipo, char *texto){
+	int i, j, k;
+	
+	for(i=0;i<janelaTexto[id].alt;i++){
+		for(j=0;j<janelaTexto[id].larg;j++){
+			switch(tipo){
+				case DEFAULT:{
+						janelaTexto[id].grade[i][j]=219;
+					break;
+				}
+				case JUSTA:{
+					if(i==0){
+						janelaTexto[id].grade[i][j]=220;
+					}
+					else if(i==janela[id].alt-1){
+						janelaTexto[id].grade[i][j]=223;
+					}
+					else{
+						janelaTexto[id].grade[i][j]=219;
+					}
+					break;
+				}
+				case BORDA:{
+					if(i==0 && j==0){																//borda superior esquerda
+						janelaTexto[id].grade[i][j]=201;
+					}
+					else if(i==0 && j==janelaTexto[id].larg-1){												//borda superior direita
+						janelaTexto[id].grade[i][j]=187;
+					}
+					else if(j==0 && i==janelaTexto[id].alt-1){												//borda inferior esquerda
+						janelaTexto[id].grade[i][j]=200;
+					}
+					else if(j==janelaTexto[id].larg-1 && i==janelaTexto[id].alt-1){									//borda inferior direita
+						janelaTexto[id].grade[i][j]=188;
+					}
+					else if(i==0 && j!=janelaTexto[id].larg-1 || i==janelaTexto[id].alt-1 && j!=janelaTexto[id].larg-1){	//borda superior/inferior
+						janelaTexto[id].grade[i][j]=205;
+					}
+					else if(j==0 && i!=0 || j==janelaTexto[id].larg-1){										//bordas laterais
+						janelaTexto[id].grade[i][j]=186;
+					}
+					else{
+						janelaTexto[id].grade[i][j]=' ';
+					}
+					break;
+				}
+			}
+		}
+	}
+	for(i=1,j=0,k=0;texto[k]!='\0';j++, k++){
+		if(j==LARG_MAX-3){
+			i++;
+			j=0;
+		}
+		janelaTexto[id].grade[i][j+1]=texto[k];
+	}
+}
+
+void desenharJanelaTexto(int id){
+	int i, j;
+	char linha[120];
+	
+	printf("\033[%im", janelaTexto[id].cor);
+	for(i=0;i<janelaTexto[id].alt;i++){
+		printf("\033[%i;%iH", janelaTexto[id].y+i, janelaTexto[id].x);
+		for(j=0;j<janelaTexto[id].larg;j++){
+			if(janelaTexto[id].grade[i][j]!=' '){
+				linha[j]=janelaTexto[id].grade[i][j];
+			}
+			else{
+				linha[j]=' ';
+			}
+		}
+		linha[j]='\0';
+		fputs(linha, stdout);
+	}
+	printf("\033[0m");
 }
